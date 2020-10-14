@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="en-us">
+<head>
+<link rel="icon" href="favicon.ico">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="description" content="Decentralized investment system powered by the Tron Blockchain.">
+<title>tronvault</title>
+<link rel="stylesheet" href="fonts/import.css">
+<link rel="stylesheet" href="css/reset.css">
+<link rel="stylesheet" href="css/jqueryui.css">
+<link rel="stylesheet" href="css/custom.css?q=tq">
+</head>
+<body>
+<div class="b-app" id="App" v-cloak>
+
+	<!--div v-if="contract.launch_date < current_date + 3600 && current_date < contract.launch_date + 172800" id="futures">
+		<a href="https://dtron-futures.cc/" target="_blank">dtron-futures.cc</a>
+		<img src="img/stock.png">
+	</div-->
+
+	<div id="c_hero" class="container" style="background: none !important; border: none !important">
+		<img src="img/logo.png">
+	</div>
+
+	<div class="container" v-if="contract.launch_date > current_date">
+		<div class="sub">
+			<h1 style="text-align: center">Launching in {{ countdown(new Date(contract.launch_date * 1000)).toString() }}!</h1>
+		</div>
+	</div>
+	
+	<div id="c_invest" class="container" v-if="user.total_invested > 0">
+		<div class="sub">
+			<h1>Dashboad</h1>
+			<br>
+			<h4>Total Invested:</h4><h6 id="total_invest">{{ user.total_invested }} trx</h6>
+			<h4>Referral Bonus:</h4><h6 id="total_refer">{{ user.total_match_refs }} trx</h6>
+			<h4>Total Daily ROI:</h4><h6 id="total_roi">{{ (280 + ((user.structure[0] >= 80)? 80 : (user.structure[0] / 10) * 10) + ((user.structure[0] >= 80)? 40 : (user.structure[1] / 10) * 5))/10 }}%</h6>
+			<h4 v-if="contract.launch_date < current_date">Withdrawn TRX:</h4><h6 id="total_refer" v-if="contract.launch_date < current_date">{{ user.total_withdrawn }}</h6>
+		</div>
+		<div class="sub" v-if="contract.launch_date < current_date">
+			<h5>Total Withdrawable</h5>
+			<h6>{{ user.for_withdraw }}</h6>
+			<button id="btn_withdraw" @click.prevent="withdraw()">WITHDRAW</button>
+		</div>
+		<div class="sub" v-if="contract.launch_date > current_date">
+			<h4>You can withdraw your earnings after launch.</h4>
+		</div>
+	</div>
+	<div class="container">
+		
+		<div class="sub">
+			<h1>28% Daily ROI for 4 days.</h1>
+		</div>
+		<div class="sub">
+			<h1>Refer and get up to 40% daily ROI!</h1>
+			<h5>+0.1% daily ROI for every LVL1 referral.</h5>
+			<h5>+0.05% daily ROI for every LVL2 referral.</h5>
+			<br>
+			<h5><u>up to 80x referrals only (+12%).</u></h5>
+			<br>
+			<h5>Level 1 Referral - 8%</h5>
+			<h5>Level 2 Referral - 5%</h5>
+			<h5>Level 3 Referral - 4%</h5>
+			<h5>Level 4 Referral - 2%</h5>
+			<h5>Level 5 Referral - 1%</h5>
+		</div>
+		<!--div class="sub" v-if="user.total_invested == 0 && contract.launch_date <= current_date"><h4>Contract running for {{ countdown(new Date(contract.launch_date * 1000)).toString() }}</h4></div-->
+		<div class="sub">
+			<h1>Deposit to Vault</h1>
+			<h4>100 trx minimum.</h4>
+			<input type="number" min="100" placeholder="100 trx" value="100" id="trx_value" v-model.number="calc.amount" @change="calc.amount = calc.amount < 100 ? 100 : calc.amount">
+			<button id="btn_invest" @click.prevent="deposit(calc.amount)">DEPOSIT</button>
+		</div>
+		<div class="sub" v-if="user.total_invested > 0 && tronWeb != undefined">
+			<h1>Deposit History</h1>
+			<table>
+				<thead><th>Amount</th><th>Time Remaining</th><th>ROI</th></thead>
+				<tr v-for="dep in user.deposits" v-if="dep[1] != 0">
+					<td>{{ tronWeb.fromSun(dep[1]) }} trx</td><td><!--{{ moment().add(dep[2], 'seconds').fromNow() }}-->{{ countdown(new Date(new Date().getTime() + (dep[2] * 1000))).toString() }}</td><td>{{ tronWeb.fromSun(dep[3]) }} trx</td>
+				</tr>
+			</table>
+		</div>
+	</div>
+	
+	<div id="c_data" class="container">
+		<div class="sub" v-if="referrer != default_referrer">
+			<h6>Referred by</h6>
+			<h5>{{ referrer }}</h5>
+		</div>
+		<div class="sub" v-if="user.total_invested > 0">
+			<h6>Your Referral Link</h6>
+			<h5>{{ location.origin }}/?ref={{ tron.account }}</h5>
+			<button class="copytext" @click="copyText(location.origin + '/?ref=' + tron.account)">COPY</button>
+		</div>
+		<div class="sub" v-if="user.total_invested == 0">
+			<h5>Deposit once to generate referral link!</h5>
+		</div>
+		<div class="sub">
+			<h1>Referrals</h1>
+			<table>
+				<thead><th>Level</th><th>Referrals</th></thead>
+				<tr><td>1</td><td id="ref_lv1">{{ user.structure[0] }} | +{{((user.structure[0] >= 80)? 80 : (user.structure[0] / 10) * 10)/10 }}% DAILY ROI</td></tr>
+				<tr><td>2</td><td id="ref_lv2">{{ user.structure[1] }} | +{{((user.structure[0] >= 80)? 40 : (user.structure[1] / 10) * 5)/10 }}% DAILY ROI</td></tr>
+				<tr><td>3</td><td id="ref_lv3">{{ user.structure[2] }}</td></tr>
+				<tr><td>4</td><td id="ref_lv4">{{ user.structure[3] }}</td></tr>
+				<tr><td>5</td><td id="ref_lv5">{{ user.structure[4] }}</td></tr>
+			</table>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="sub">
+			<button id="view_contract" @click="window.open('https://tronscan.org/#/contract/TVSxU3pv42ihQhUfnC3fyEwiFgUSL5FcZo/code')">TRON VAULT SMART CONTRACT</button>
+		</div>
+	</div>
+
+	<!--div class="container">
+		<div class="sub">
+			<h6>Questions?</h6>
+			<button id="view_telegram" @click="window.open('https://t.me/dtronofficial')">JOIN OUR TELEGRAM GROUP &nbsp;&nbsp;[&#x2197;]</button>
+			<button id="view_contract" @click="window.open('https://tronscan.org/#/contract/TVSxU3pv42ihQhUfnC3fyEwiFgUSL5FcZo/code')" v-if="user.total_invested > 0">VERIFIED SMART CONTRACT &nbsp;&nbsp;[&#x2197;]</button>
+		</div>
+	</div-->
+	
+	<div class="container" v-if="contract.launch_date < current_date">
+		<div class="sub">
+			<h4 style="text-align: center">Contract running for {{ countdown(new Date(contract.launch_date * 1000)).toString() }}!</h4>
+			
+		</div>
+	</div>
+
+	<div class="container" style="Box-shadow: none; border: none; background: none; color: #fff">
+		tronvault &copy; 2020
+	</div>
+	
+</div>
+
+<script src="js/jquery.min.js"></script>
+<script src="js/jquery.ui.js"></script>
+<script src="js/jquery.ui.touch-punch.min.js"></script>
+<script src="js/jquery.toast.min.js"></script>
+<script src="js/jquery.cookie.min.js"></script>
+<script src="js/moment.js"></script>
+<script src="js/countdown.js"></script>
+<script src="js/tronweb.js"></script>
+<script src="js/vue.js"></script>
+<script src="js/custom.js?q=31"></script>
+</body>
+</html>
