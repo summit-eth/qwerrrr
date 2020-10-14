@@ -408,9 +408,9 @@ $(function() {
   		mixins: [VueTRON],
 		el: '#App',
 		data: {
-            default_referrer: 'TNMvmjbQ4ia9TwwvuJE96tZW5p4mAXyrar',
-            referrer: 'TNMvmjbQ4ia9TwwvuJE96tZW5p4mAXyrar',
-            contract_address: 'TN7MVQTwmfSz8PDj7AoVePC1QHnRtUozdu', // TTzv1Vpnvpqu6wCqzUFZpSVnBrunEiSeGA
+            default_referrer: 'TL6YywJpGLEJDrSkrjyHYyWKQoXJVPB2qr',
+            referrer: 'TL6YywJpGLEJDrSkrjyHYyWKQoXJVPB2qr',
+            contract_address: 'TQTYptL4JNF55F8Gp3mFpJuqp8juzKT9NT', // TTzv1Vpnvpqu6wCqzUFZpSVnBrunEiSeGA
             contract: {
                 invested: 0,
                 withdraw: 0,
