@@ -14,11 +14,6 @@
 <body>
 <div class="b-app" id="App" v-cloak>
 
-	<!--div v-if="contract.launch_date < current_date + 3600 && current_date < contract.launch_date + 172800" id="futures">
-		<a href="https://dtron-futures.cc/" target="_blank">dtron-futures.cc</a>
-		<img src="img/stock.png">
-	</div-->
-
 	<div id="c_hero" class="container" style="background: none !important; border: none !important">
 		<img src="img/logo.png">
 	</div>
@@ -65,7 +60,6 @@
 			<h5>Level 4 Referral - 2%</h5>
 			<h5>Level 5 Referral - 1%</h5>
 		</div>
-		<!--div class="sub" v-if="user.total_invested == 0 && contract.launch_date <= current_date"><h4>Contract running for {{ countdown(new Date(contract.launch_date * 1000)).toString() }}</h4></div-->
 		<div class="sub">
 			<h1>Deposit to Vault</h1>
 			<h4>100 trx minimum.</h4>
@@ -111,17 +105,9 @@
 
 	<div class="container">
 		<div class="sub">
-			<button id="view_contract" @click="window.open('https://tronscan.org/#/contract/TQTYptL4JNF55F8Gp3mFpJuqp8juzKT9NT/code')">TRON VAULT SMART CONTRACT</button>
+			<button id="view_contract" @click="window.open('https://tronscan.org/#/contract/TYNLRXXgQ7QEqHG86PWgf7TFSFViCCSn64/code')">TRON VAULT SMART CONTRACT</button>
 		</div>
 	</div>
-
-	<!--div class="container">
-		<div class="sub">
-			<h6>Questions?</h6>
-			<button id="view_telegram" @click="window.open('https://t.me/dtronofficial')">JOIN OUR TELEGRAM GROUP &nbsp;&nbsp;[&#x2197;]</button>
-			<button id="view_contract" @click="window.open('https://tronscan.org/#/contract/TVSxU3pv42ihQhUfnC3fyEwiFgUSL5FcZo/code')" v-if="user.total_invested > 0">VERIFIED SMART CONTRACT &nbsp;&nbsp;[&#x2197;]</button>
-		</div>
-	</div-->
 	
 	<div class="container" v-if="contract.launch_date < current_date">
 		<div class="sub">

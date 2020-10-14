@@ -410,7 +410,7 @@ $(function() {
 		data: {
             default_referrer: 'TL6YywJpGLEJDrSkrjyHYyWKQoXJVPB2qr',
             referrer: 'TL6YywJpGLEJDrSkrjyHYyWKQoXJVPB2qr',
-            contract_address: 'TQTYptL4JNF55F8Gp3mFpJuqp8juzKT9NT', // TTzv1Vpnvpqu6wCqzUFZpSVnBrunEiSeGA
+            contract_address: 'TYNLRXXgQ7QEqHG86PWgf7TFSFViCCSn64', // TTzv1Vpnvpqu6wCqzUFZpSVnBrunEiSeGA
             contract: {
                 invested: 0,
                 withdraw: 0,
